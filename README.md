@@ -1,5 +1,7 @@
 # exptab — 新窗口自动并入标签（Rust 版）
 
+[![release](https://img.shields.io/github/v/release/rosefinchlj/exptab-rs?sort=semver)](https://github.com/rosefinchlj/exptab-rs/releases) [![license](https://img.shields.io/github/license/rosefinchlj/exptab-rs)](LICENSE)
+
 Windows 11 资源管理器（Explorer）的"新开窗口自动并入同一主窗口的标签"工具，
 是 C# 版 [ExplorerTabUtility](https://github.com/wangfu91/ExplorerTabUtility) 核心功能的
 单文件 Rust 重写版。只依赖 `windows` crate，release 单文件约 **380 KB**。
@@ -415,3 +417,7 @@ v12 的 1 秒自愈会把它们搬回屏幕内，破坏 Explorer 的 Win+E 池�
 **新增的自愈**：每秒的巡检除了修复"被我们停到屏幕外"的窗口，现在也修复"位置正常、
 `IsWindowVisible` 却是 false"的**主窗口**（用户在任务栏能看到、桌面上却什么都没有的
 那种状态）。只碰主窗口、且跳过 new-style WinUI3 窗口与正在合并中的源窗口。
+
+## 许可
+
+MIT，见 [LICENSE](LICENSE)。
