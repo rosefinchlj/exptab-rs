@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>exptab — Windows 11 资源管理器窗口自动并入标签（Rust 开源，413 KB 单文件）</title>
+<meta name="description" content="exptab 是 Windows 11 资源管理器标签工具：新开的资源管理器窗口（包括 Win+E）自动并入主窗口的标签页，不再堆叠窗口。Rust 单文件实现，约 413 KB，无 .NET 依赖，免安装；是 C# 版 ExplorerTabUtility 核心功能的 Rust 重写，MIT 开源。">
+<meta name="keywords" content="资源管理器 多标签, Windows 11 标签页, 窗口合并标签, Explorer 标签工具, explorer tab utility, file explorer tabs, Win+E 合并窗口, QTTabBar 替代, Rust 桌面工具">
+<meta name="author" content="rosefinchlj">
+<link rel="canonical" href="https://rosefinchlj.github.io/exptab-rs/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="exptab">
+<meta property="og:title" content="exptab — Windows 11 资源管理器窗口自动并入标签（Rust 开源）">
+<meta property="og:description" content="新开窗口自动变成主窗口的标签页，单文件 413 KB，无 .NET 依赖，空闲 CPU ≤0.6%。ExplorerTabUtility 的 Rust 重写。">
+<meta property="og:url" content="https://rosefinchlj.github.io/exptab-rs/">
+<meta property="og:image" content="https://rosefinchlj.github.io/exptab-rs/og.png">
+<meta property="og:locale" content="zh_CN">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="exptab — Windows 11 资源管理器窗口自动并入标签（Rust）">
+<meta name="twitter:description" content="新开窗口自动变成主窗口的标签页，单文件 413 KB，无 .NET 依赖。">
+<meta name="twitter:image" content="https://rosefinchlj.github.io/exptab-rs/og.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://rosefinchlj.github.io/exptab-rs/#website",
+      "name": "exptab",
+      "url": "https://rosefinchlj.github.io/exptab-rs/",
+      "inLanguage": "zh-CN",
+      "author": { "@type": "Person", "name": "rosefinchlj", "url": "https://github.com/rosefinchlj" }
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": "https://rosefinchlj.github.io/exptab-rs/#app",
+      "name": "exptab",
+      "alternateName": ["exptab-rs", "Explorer 窗口合并标签工具"],
+      "applicationCategory": "UtilitiesApplication",
+      "applicationSubCategory": "File Explorer Tab Utility",
+      "operatingSystem": "Windows 11 x64",
+      "softwareVersion": "0.1.0",
+      "fileSize": "413KB",
+      "inLanguage": "zh-CN",
+      "isAccessibleForFree": true,
+      "license": "https://opensource.org/licenses/MIT",
+      "url": "https://rosefinchlj.github.io/exptab-rs/",
+      "downloadUrl": "https://github.com/rosefinchlj/exptab-rs/releases/download/v0.1.0/exptab-v0.1.0-windows-x64.exe",
+      "installUrl": "https://github.com/rosefinchlj/exptab-rs/releases",
+      "codeRepository": "https://github.com/rosefinchlj/exptab-rs",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CNY" },
+      "author": { "@type": "Person", "name": "rosefinchlj", "url": "https://github.com/rosefinchlj" },
+      "keywords": "Windows 11 资源管理器 多标签, 窗口合并标签, explorer tab utility, file explorer tabs, Rust, Win32, COM, open source"
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://rosefinchlj.github.io/exptab-rs/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "exptab 解决什么问题？Windows 11 不是自带标签页吗？",
+          "acceptedAnswer": { "@type": "Answer", "text": "Windows 11 22H2 起资源管理器有了原生标签页，但新开窗口不会自动并入已有标签：每次 Win+E 或从任务栏打开新目录，都是一个独立窗口。exptab 补这个缺口：新窗口一出现就把它并进主窗口的标签栏，同时保证原窗口不闪、不丢、不重复建标签。" }
+        },
+        {
+          "@type": "Question",
+          "name": "exptab 和 C# 版 ExplorerTabUtility 有什么区别？",
+          "acceptedAnswer": { "@type": "Answer", "text": "核心思路相同。exptab 是单文件 413 KB、无 .NET 运行时依赖；常驻内存约 10.7 MB（C# 版私有集约 105.6 MB）；用 WinEvent hook + COM 在窗口显示前介入，同机实测 p50 342ms vs 574ms；代码全部开源，功能范围只做核心合并。" }
+        },
+        {
+          "@type": "Question",
+          "name": "exptab 支持 Windows 10 吗？",
+          "acceptedAnswer": { "@type": "Answer", "text": "不支持。Windows 10 的资源管理器没有标签页模型，本工具只针对 Windows 11（已在 Windows 11 26H2 / build 26300 验证）。" }
+        },
+        {
+          "@type": "Question",
+          "name": "exptab 需要管理员权限吗？安全吗？",
+          "acceptedAnswer": { "@type": "Answer", "text": "不需要管理员权限，普通用户权限即可运行。程序只做 Win32 窗口操作与回环 TCP 控制通道，不联网；但没有代码签名，首次运行可能触发 SmartScreen 提示。" }
+        },
+        {
+          "@type": "Question",
+          "name": "exptab 会和其他标签工具冲突吗？怎么卸载？",
+          "acceptedAnswer": { "@type": "Answer", "text": "同一时间建议只运行一个标签合并工具（如 QTTabBar、WindowTabs、C# 版 ExplorerTabUtility）。卸载：退出 exptab 后删除 exe；开过开机自启的先在设置里关闭。窗口异常被隐藏时可运行 exptab rescue 还原。" }
+        },
+        {
+          "@type": "Question",
+          "name": "exptab 对性能有影响吗？",
+          "acceptedAnswer": { "@type": "Answer", "text": "事件驱动等待，空闲 CPU ≤0.6%（单核）；只在窗口创建瞬间工作，合并完成后不额外占用。单次合并总 CPU 约 0.016 秒。" }
+        }
+      ]
+    }
+  ]
+}
+</script>
+<style>
+  :root{--bg:#0d1117;--panel:#161b22;--border:#30363d;--fg:#e6edf3;--muted:#8b949e;--acc:#4c8bf5;--acc2:#f0b429;}
+  *{box-sizing:border-box}
+  body{margin:0;background:radial-gradient(1200px 600px at 85% -10%,#2a2110 0%,#0d1117 55%) no-repeat,var(--bg);color:var(--fg);font:16px/1.75 -apple-system,"Segoe UI","Microsoft YaHei",system-ui,sans-serif}
+  a{color:var(--acc);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:980px;margin:0 auto;padding:0 20px}
+  header{padding:64px 0 32px}
+  .badge{display:inline-block;font-size:13px;color:var(--acc2);border:1px solid #4a3a1a;background:#241d10;border-radius:999px;padding:2px 12px;margin-bottom:18px}
+  h1{font-size:clamp(30px,5vw,44px);line-height:1.25;margin:0 0 8px}
+  .sub{font-size:clamp(17px,2.4vw,21px);color:var(--muted);margin:0 0 26px}
+  .cta{display:flex;flex-wrap:wrap;gap:12px;margin:26px 0 8px}
+  .btn{display:inline-block;padding:12px 22px;border-radius:10px;font-weight:600;border:1px solid var(--border)}
+  .btn.primary{background:var(--acc);border-color:var(--acc);color:#fff}
+  .btn.ghost{background:var(--panel);color:var(--fg)}
+  .meta{color:var(--muted);font-size:14px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin:18px 0 40px}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:18px 20px}
+  .card h3{margin:0 0 6px;font-size:17px}
+  .card p{margin:0;color:var(--muted);font-size:15px}
+  h2{font-size:26px;margin:48px 0 14px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+  h3.q{font-size:18px;margin:26px 0 6px}
+  .faq p{color:var(--muted);margin:0}
+  table{width:100%;border-collapse:collapse;margin:16px 0;font-size:15px}
+  th,td{border:1px solid var(--border);padding:8px 10px;text-align:left}
+  th{background:var(--panel)}
+  footer{margin:56px 0 40px;padding-top:20px;border-top:1px solid var(--border);color:var(--muted);font-size:14px}
+  code{background:#1f2630;border-radius:5px;padding:1px 5px;font-size:14px}
+  .diagram{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:10px;margin:20px 0}
+  .diagram svg{width:100%;height:auto;display:block}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="badge">Rust 开源项目 · MIT · 413 KB 单文件 · 无 .NET</div>
+  <h1>exptab — Windows 11 资源管理器窗口自动并入标签</h1>
+  <p class="sub">每次 Win+E 都开出独立窗口？开启「合并标签」后，新窗口会自动变成主窗口的一个标签页，不再堆叠。<br>
+  exptab merges newly opened File Explorer windows into tabs — a 413 KB Rust rewrite of ExplorerTabUtility.</p>
+  <div class="cta">
+    <a class="btn primary" href="https://github.com/rosefinchlj/exptab-rs/releases/download/v0.1.0/exptab-v0.1.0-windows-x64.exe">下载 exe（v0.1.0 · 413 KB）</a>
+    <a class="btn ghost" href="https://github.com/rosefinchlj/exptab-rs">GitHub 源码</a>
+    <a class="btn ghost" href="https://github.com/rosefinchlj/exptab-rs/releases">所有版本</a>
+  </div>
+  <p class="meta">仅 Windows 11（x64）· 免安装绿色版 · 无需管理员权限 · 开源协议 MIT</p>
+</header>
+
+<h2>效果示意</h2>
+<div class="diagram">
+<svg viewBox="0 0 900 320" role="img" aria-label="开启 exptab 前后对比：两个独立的资源管理器窗口，合并为一个带两个标签的窗口">
+  <defs>
+    <linearGradient id="tabOn" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2f3a48"/><stop offset="100%" stop-color="#232b36"/>
+    </linearGradient>
+  </defs>
+  <g font-family="Segoe UI, Microsoft YaHei, sans-serif">
+    <text x="30" y="30" fill="#f0b429" font-size="16">开启前：每次 Win+E 都多一个窗口</text>
+
+    <rect x="30" y="48" width="330" height="150" rx="9" fill="#1f2630" stroke="#3a4350"/>
+    <rect x="30" y="48" width="330" height="30" rx="9" fill="#2a3340"/>
+    <circle cx="48" cy="63" r="4" fill="#ff5f57"/><circle cx="64" cy="63" r="4" fill="#febc2e"/><circle cx="80" cy="63" r="4" fill="#28c840"/>
+    <text x="100" y="68" fill="#e6edf3" font-size="13">此电脑</text>
+    <text x="48" y="110" fill="#8b949e" font-size="13">下载</text>
+    <text x="48" y="136" fill="#8b949e" font-size="13">文档</text>
+    <text x="48" y="162" fill="#8b949e" font-size="13">图片</text>
+
+    <rect x="510" y="86" width="330" height="150" rx="9" fill="#1f2630" stroke="#3a4350"/>
+    <rect x="510" y="86" width="330" height="30" rx="9" fill="#2a3340"/>
+    <circle cx="528" cy="101" r="4" fill="#ff5f57"/><circle cx="544" cy="101" r="4" fill="#febc2e"/><circle cx="560" cy="101" r="4" fill="#28c840"/>
+    <text x="580" y="106" fill="#e6edf3" font-size="13">D:\Projects</text>
+    <text x="528" y="148" fill="#8b949e" font-size="13">rust\</text>
+    <text x="528" y="174" fill="#8b949e" font-size="13">exptab-rs\</text>
+
+    <path d="M 420 150 C 460 150, 460 236, 500 236" stroke="#f0b429" stroke-width="3" fill="none" stroke-dasharray="8 5"/>
+    <polygon points="500,228 522,236 500,244" fill="#f0b429"/>
+    <text x="452" y="196" fill="#f0b429" font-size="14" transform="rotate(-6 452 196)">exptab</text>
+
+    <text x="30" y="232" fill="#7ee0c0" font-size="16">开启后：一个主窗口，新目录变成标签</text>
+
+    <rect x="30" y="252" width="810" height="48" rx="9" fill="#1f2630" stroke="#3a4350"/>
+    <rect x="30" y="252" width="240" height="26" rx="9" fill="url(#tabOn)"/>
+    <path d="M 30 278 h 240 v -4 h -240 z" fill="url(#tabOn)"/>
+    <text x="56" y="270" fill="#e6edf3" font-size="13">此电脑</text>
+    <rect x="270" y="252" width="240" height="26" rx="9" fill="#141a22" stroke="#3a4350"/>
+    <text x="296" y="270" fill="#8b949e" font-size="13">D:\Projects</text>
+    <text x="56" y="294" fill="#8b949e" font-size="13">一个窗口 · 不再堆叠 · Ctrl+Shift 可临时放行</text>
+  </g>
+</svg>
+</div>
+
+<h2>核心特性</h2>
+<div class="grid">
+  <div class="card"><h3>新窗口自动并入</h3><p>任务栏、Win+E、命令行打开的新窗口，出现即变成主窗口标签。</p></div>
+  <div class="card"><h3>413 KB 单文件</h3><p>纯 Rust + <code>windows</code> crate，静态链接，无 .NET 运行时依赖。</p></div>
+  <div class="card"><h3>零闪屏</h3><p>WinEvent hook 在窗口显示前介入，标签几乎无感出现。</p></div>
+  <div class="card"><h3>低开销</h3><p>空闲 CPU ≤0.6%，常驻内存约 10.7 MB；单次合并总 CPU 约 0.016 秒。</p></div>
+  <div class="card"><h3>Ctrl+Shift 放行</h3><p>临时不想合并？按住 Ctrl+Shift 打开窗口，或 <code>exptab off</code>。</p></div>
+  <div class="card"><h3>CLI 控制 + 自愈</h3><p><code>status / on / off / metrics / rescue</code>；窗口被隐藏或移出屏幕可一键救回。</p></div>
+</div>
+
+<h2>同机实测（exptab Rust vs C# ExplorerTabUtility 2.5.0）</h2>
+<table>
+  <thead><tr><th>指标</th><th>exptab（Rust 0.1.0）</th><th>ExplorerTabUtility 2.5.0（C#）</th></tr></thead>
+  <tbody>
+    <tr><td>单文件体积</td><td>413 KB</td><td>需 .NET 运行时</td></tr>
+    <tr><td>常驻内存（Private）</td><td>约 10.7 MB</td><td>约 105.6 MB</td></tr>
+    <tr><td>标签出现耗时 p50</td><td>342 ms</td><td>574 ms</td></tr>
+    <tr><td>空闲 CPU（单核）</td><td>≤ 0.6%</td><td>—</td></tr>
+  </tbody>
+</table>
+<p class="meta">数据来自同机、同一批窗口场景的 Release 构建实测，明细见仓库 <code>tools/bench-out/</code>。</p>
+
+<h2>常见问题（FAQ）</h2>
+<div class="faq">
+  <h3 class="q">exptab 解决什么问题？Windows 11 不是自带标签页吗？</h3>
+  <p>Windows 11 22H2 起资源管理器有了原生标签页，但新开窗口不会自动并入已有标签：每次 Win+E 或从任务栏打开新目录，都是一个独立窗口。exptab 补这个缺口：新窗口一出现就把它并进主窗口的标签栏，同时保证原窗口不闪、不丢、不重复建标签。</p>
+  <h3 class="q">和 C# 版 ExplorerTabUtility 有什么区别？</h3>
+  <p>核心思路相同。exptab 是单文件 413 KB、无 .NET 运行时依赖；常驻内存约 10.7 MB（C# 版私有集约 105.6 MB）；用 WinEvent hook + COM 在窗口显示前介入，同机实测 p50 342ms vs 574ms；代码全部开源，功能范围只做核心合并（无托盘/热键/恢复标签）。</p>
+  <h3 class="q">支持 Windows 10 吗？</h3>
+  <p>不支持。Windows 10 的资源管理器没有标签页模型，本工具只针对 Windows 11（已在 Windows 11 26H2 / build 26300 验证）。</p>
+  <h3 class="q">需要管理员权限吗？会被杀毒软件误报吗？</h3>
+  <p>不需要管理员权限，普通用户权限即可运行。程序只做 Win32 窗口操作与回环 TCP 控制通道，不联网；但没有代码签名，首次运行可能触发 SmartScreen 提示（选择「更多信息 → 仍要运行」）。</p>
+  <h3 class="q">会和其他标签工具冲突吗？怎么卸载？</h3>
+  <p>同一时间建议只运行一个标签合并工具（如 QTTabBar、WindowTabs、C# 版 ExplorerTabUtility）。卸载：退出 exptab 后删除 exe；开过开机自启的先在设置里关闭。窗口异常被隐藏时可运行 <code>exptab rescue</code> 还原。</p>
+  <h3 class="q">对性能有影响吗？</h3>
+  <p>事件驱动等待，空闲 CPU ≤0.6%；只在窗口创建瞬间工作，合并完成后不额外占用。</p>
+</div>
+
+<h2>相关项目</h2>
+<p><a href="https://github.com/rosefinchlj/clipnest">clipnest</a> — Windows 剪贴板历史管理器（Rust + egui），同样是学习项目开源。<br>
+参考上游：<a href="https://github.com/wangfu91/ExplorerTabUtility">ExplorerTabUtility</a>（C# 原版）。</p>
+
+<footer>
+  <p>© 2026 rosefinchlj · <a href="https://github.com/rosefinchlj/exptab-rs">GitHub</a> · <a href="https://github.com/rosefinchlj/exptab-rs/blob/main/LICENSE">MIT License</a> · <a href="https://github.com/rosefinchlj/exptab-rs/releases">Releases</a></p>
+  <p>关键词：资源管理器多标签 · 窗口合并标签 · Explorer 标签工具 · Win+E 合并 · Rust 桌面应用 · 单文件 exe · 开源</p>
+</footer>
+</div>
+</body>
+</html>

@@ -11,6 +11,21 @@ Windows 11 资源管理器（Explorer）的"新开窗口自动并入同一主窗
 
 > **下载**：[Releases](https://github.com/rosefinchlj/exptab-rs/releases) 提供最新单文件 exe（Windows 11 x64，免安装）。
 > 本项目同时作为 **Rust 实践学习项目** 开源：Win32 窗口/COM 自动化、事件驱动检测、单文件 daemon + 回环 TCP 控制通道。
+> 在线介绍页：[rosefinchlj.github.io/exptab-rs](https://rosefinchlj.github.io/exptab-rs/)
+
+## 这是什么
+
+**exptab 是一个 Windows 11 资源管理器标签工具（窗口合并工具）**：开启「合并标签」后，任何新弹出的资源管理器窗口
+（包括 `Win+E` 新开的窗口）都会自动并入当前主窗口，变成它的一个**标签页**，而不是再堆一个窗口。
+单文件 exe 约 413 KB，免安装、无 .NET 运行时依赖，Rust 实现。
+
+**exptab is a Windows 11 File Explorer tab utility** that automatically merges newly opened Explorer windows into the
+existing window as tabs. It is a single-binary Rust rewrite of the C# [ExplorerTabUtility](https://github.com/wangfu91/ExplorerTabUtility)
+core feature, built on Win32 + COM (WinEvent hooks) instead of .NET. Portable exe, ~413 KB.
+
+常见搜索词 / commonly searched as：Windows 11 资源管理器 多标签、资源管理器 窗口合并标签、Explorer 标签页工具、
+文件资源管理器 标签 管理、file explorer tabs merge、explorer tab utility、Win11 标签页 合并。
+可替代 / alternatives：Windows 11 原生标签页（不支持新窗口自动并入）、C# 版 ExplorerTabUtility、QTTabBar、WindowTabs（差异见 [FAQ](#faq)）。
 
 ---
 
@@ -68,6 +83,41 @@ main_hwnd=0x0                ; 0=自动选主窗口；也可写死某个窗口�
 
 合并指标：`%LOCALAPPDATA%\exptab\metrics.csv`（每次合并一行，含各阶段耗时；
 文件可随时删除，daemon 下次写入会重建表头）。
+
+## FAQ
+
+### exptab 解决什么问题？Windows 11 不是自带标签页吗？
+
+Windows 11 22H2 起资源管理器有了原生标签页，但**新开窗口不会自动并入已有标签**：每次 `Win+E` 或从任务栏
+打开新目录，都是一个独立窗口。exptab 正是补这个缺口：新窗口一出现就把它并进主窗口的标签栏，
+同时保证原窗口不闪、不丢、不重复建标签。
+
+### 和 C# 版 ExplorerTabUtility 有什么区别？
+
+两者核心思路相同（监听窗口创建 → 把新窗口变成主窗口标签 → 关掉源窗口）。exptab 的差异：
+
+- **单文件 413 KB**，无 .NET 运行时依赖；常驻内存约 10.7 MB（C# 版私有集约 105.6 MB）；
+- 用 WinEvent hook + COM 直接在窗口**显示前**介入，标签出现更快（同机实测 p50 342ms vs 574ms）；
+- 代码全部开源、可读，属于 Rust 学习项目；功能范围刻意只做核心合并（无托盘/热键/恢复标签等）。
+
+### 支持 Windows 10 吗？
+
+不支持。Windows 10 的资源管理器没有标签页模型，本工具只针对 Windows 11（已在 Windows 11 26H2 / build 26300 验证）。
+
+### 需要管理员权限吗？会被杀毒软件误报吗？
+
+不需要管理员权限，普通用户权限即可运行。程序只做 Win32 窗口操作 + 回环 TCP 控制通道，不联网；
+但没有代码签名，首次运行可能触发 SmartScreen 提示（选择「更多信息 → 仍要运行」即可）。
+
+### 会和其他标签工具冲突吗？怎么卸载？
+
+同一时间建议只运行一个标签合并工具（如 QTTabBar、WindowTabs、C# 版 ExplorerTabUtility），避免互相抢占窗口。
+卸载：退出 exptab（`quit` 或关闭控制台）后删除 exe；若开过开机自启，先在设置里关闭。窗口被隐藏的异常情况可运行
+`exptab rescue` 还原。
+
+### 对性能有影响吗？
+
+事件驱动等待，空闲 CPU ≤0.6%（单核）；只在窗口创建瞬间工作，合并完成后不额外占用。
 
 ## 4. 实现原理（为什么它比 C# 版更早介入）
 
@@ -417,6 +467,12 @@ v12 的 1 秒自愈会把它们搬回屏幕内，破坏 Explorer 的 Win+E 池�
 **新增的自愈**：每秒的巡检除了修复"被我们停到屏幕外"的窗口，现在也修复"位置正常、
 `IsWindowVisible` 却是 false"的**主窗口**（用户在任务栏能看到、桌面上却什么都没有的
 那种状态）。只碰主窗口、且跳过 new-style WinUI3 窗口与正在合并中的源窗口。
+
+## 相关项目
+
+- [clipnest](https://github.com/rosefinchlj/clipnest) — Windows 剪贴板历史管理器（Rust + egui），同样按学习项目开源。
+- 在线介绍页：[rosefinchlj.github.io/exptab-rs](https://rosefinchlj.github.io/exptab-rs/)
+- 上游参考：[ExplorerTabUtility](https://github.com/wangfu91/ExplorerTabUtility)（C# 原版）。
 
 ## 许可
 
