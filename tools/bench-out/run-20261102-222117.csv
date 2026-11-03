@@ -1,0 +1,2 @@
+"run","target","status","succeeded","source_hwnd","source_pid","tab_hwnd","tab_parent","spawn_us","create_us","show_us","hide_us","hide_source","destroy_us","t_create_to_hide_us","t_create_to_new_tab_us","t_create_to_destroy_us","flashed_ms","windows_before","tabs_before","note"
+"1","C:\Users\jun.liu\AppData\Local\Temp\exptab-bench-probe\run-20261102-222117-01","merged","True","0xBD2512","7320","0x9256A","0xE019A8","10593.3","1439164.8","1468750.7","1559886.3","event","1674631","120721.5","31228.1","235466.2","91.136","1","4",""

@@ -1,0 +1,14 @@
+t_us,evt,class,hwnd,parent,pid,visible,proc_us,note
+2537.0,mark,,0x0,0x0,0,0,187,spawn
+370985.9,hide,ShellTabWindowClass,0x32860,0x829C0,49544,0,209,
+371696.9,destroy,ShellTabWindowClass,0x32860,0x829C0,49544,0,2,
+462965.3,show,CabinetWClass,0x22BDA,0x0,39736,1,25,
+649930.7,create,ShellTabWindowClass,0x11277A,0x22BDA,39736,1,36,
+1075887.9,create,CabinetWClass,0x22BDA,0x0,39736,1,6,
+1869716.4,hide,CabinetWClass,0x22BDA,0x0,39736,0,10,
+1882530.1,destroy,ShellTabWindowClass,0x11277A,0x22BDA,39736,0,3,
+1957897.5,destroy,CabinetWClass,0x22BDA,0x0,39736,0,3,
+2007404.2,hide,ShellTabWindowClass,0x826E4,0xE019A8,48860,0,17,
+2007804.2,destroy,ShellTabWindowClass,0x826E4,0xE019A8,48860,0,2,
+2414227.9,hide,ShellTabWindowClass,0x9256A,0xE019A8,48860,0,20,
+2414652.9,destroy,ShellTabWindowClass,0x9256A,0xE019A8,48860,0,2,

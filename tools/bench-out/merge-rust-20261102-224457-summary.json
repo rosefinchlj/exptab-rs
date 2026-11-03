@@ -1,0 +1,11 @@
+{
+  "label": "rust",
+  "runs": 2,
+  "merged_ok": 0,
+  "spawn_to_detect": "{\"n\":0}",
+  "spawn_to_hide": "{\"n\":0}",
+  "spawn_to_tab": "{\"n\":0}",
+  "spawn_to_close": "{\"n\":0}",
+  "detect_to_hide": "{\"n\":0}",
+  "flashed": "{\"mean\":0.0,\"p95\":0,\"max\":0,\"p50\":0,\"n\":2,\"min\":0}"
+}

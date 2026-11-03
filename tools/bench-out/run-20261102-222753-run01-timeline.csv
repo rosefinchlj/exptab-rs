@@ -1,0 +1,6 @@
+t_us,evt,class,hwnd,parent,pid,visible,proc_us,note
+3652.1,mark,,0x0,0x0,0,0,228,spawn
+475529.4,show,CabinetWClass,0x52A2C,0x0,65668,1,267,
+583298.8,create,ShellTabWindowClass,0xE2918,0x52A2C,65668,1,34,
+1040467.9,create,ShellTabWindowClass,0x826E4,0xE019A8,48860,1,27,
+1057765.9,create,CabinetWClass,0x52A2C,0x0,65668,1,6,

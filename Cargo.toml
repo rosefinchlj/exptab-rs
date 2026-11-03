@@ -1,0 +1,30 @@
+[package]
+name = "exptab"
+version = "0.1.0"
+edition = "2021"
+description = "Fast auto-merge of new Windows 11 Explorer windows into tabs"
+license = "MIT"
+repository = "https://github.com/rosefinchlj/exptab-rs"
+
+[dependencies]
+windows = { version = "0.58", features = [
+    "Win32_Foundation",
+    "Win32_UI_WindowsAndMessaging",
+    "Win32_UI_Accessibility",
+    "Win32_System_Com",
+    "Win32_System_Ole",
+    "Win32_System_Threading",
+    "Win32_System_Performance",
+    "Win32_Security",
+    "Win32_UI_Shell",
+    "Win32_Graphics_Dwm",
+    "Win32_UI_Input_KeyboardAndMouse",
+    "Win32_System_Console",
+    "implement",
+] }
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"

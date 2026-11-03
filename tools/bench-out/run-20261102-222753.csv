@@ -1,0 +1,2 @@
+"run","target","status","succeeded","source_hwnd","source_pid","tab_hwnd","tab_parent","spawn_us","create_us","create_source","show_us","hide_us","hide_source","destroy_us","t_create_to_hide_us","t_create_to_new_tab_us","t_create_to_destroy_us","flashed_ms","windows_before","tabs_before","tab_source","note"
+"1","C:\Users\jun.liu\AppData\Local\Temp\exptab-bench-probe\run-20261102-222753-01","merged","True","0x52A2C","65668","0x826E4","0xE019A8","4731","368402.2","poll","475529.4","632035.2","poll-alpha0",,"263633","378214.2",,"156.506","1","5","poll",""

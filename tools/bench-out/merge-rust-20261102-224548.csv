@@ -1,0 +1,4 @@
+"run","label","leaf","merged","spawn_to_detect_ms","spawn_to_hide_ms","spawn_to_tab_ms","spawn_to_close_ms","detect_to_hide_ms","tab_title","flashed_ms","src_hwnd","main","main_tabs_before","main_tabs_after"
+"1","rust","rust-01","False","403","482","1082","2140","79","main","0","0x42B1A","0x82636","8","8"
+"2","rust","rust-02","False","338","513","788","1999","175","main","0","0x22C66","0x82636","8","8"
+"3","rust","rust-03","False","355","430","692","2217","75","main","0","0xB29AE","0x82636","8","8"
